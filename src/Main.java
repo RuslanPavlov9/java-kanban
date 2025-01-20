@@ -1,7 +1,3 @@
-import java.util.HashMap;
-import java.util.Map;
-
-
 public class Main {
 
      static TaskManager taskManager = new TaskManager();
@@ -56,9 +52,6 @@ public class Main {
         System.out.println("________удаление____________");
         taskManager.removeTaskById(task1.getId());
         taskManager.removeEpicTaskById(epicTask1.getId());
-        taskManager.printTasks();
-        taskManager.printEpicTasks();
-        taskManager.removeAllTasks();
 
     }
 

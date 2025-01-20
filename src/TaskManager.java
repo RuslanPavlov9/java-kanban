@@ -10,18 +10,23 @@ public class TaskManager{
     private int nextId = 1;
 
 
-    //Создание. Сам объект должен передаваться в качестве параметра.
+    public int getNextId() {
+        return nextId++;
+    }
+
     public void addTask(Task task) {
-        tasks.put(task.setId(nextId++), task);
+        int id = task.setId(getNextId());
+        tasks.put(id, task);
     }
 
     public void addEpicTask(EpicTask epicTask) {
-        epicTasks.put(epicTask.setId(nextId++), epicTask);
+        int id = epicTask.setId(getNextId());
+        epicTasks.put(id, epicTask);
     }
 
     public void addSubTask (SubTask subTask) {
         EpicTask epicTask = epicTasks.get(subTask.getEpicId());
-        int subTaskId = subTask.setId(nextId++);
+        int subTaskId = subTask.setId(getNextId());
         epicTask.addSubTaskId(subTaskId);
         subTasks.put(subTaskId, subTask);
     }
@@ -32,6 +37,7 @@ public class TaskManager{
 
     public void updateEpicTask(EpicTask epicTask) {
         epicTasks.put(epicTask.getId(), epicTask);
+        checkEpicStatus(epicTask.getId());
     }
 
     public void updateSubTask(SubTask subTask) {
@@ -78,6 +84,15 @@ public class TaskManager{
         tasks.remove(id);
     }
 
+    public void removeAllTasks(){
+        tasks.clear();
+    }
+
+    public void deleteEpics() {
+        epicTasks.clear();
+        subTasks.clear();
+    }
+
     public void removeEpicTaskById(int epicId) {
         List <Integer> subtaskIds = epicTasks.get(epicId).getSubTaskIds();
         for (Integer subtaskId : subtaskIds) {
@@ -94,18 +109,12 @@ public class TaskManager{
         checkEpicStatus(epicId);
     }
 
-    public void removeAllTasks(){
-            tasks.clear();
-            subTasks.clear();
-            epicTasks.clear();
-            System.out.println("Все задачи удалены.");
-    }
-
-    public void printTasks() {
-        tasks.forEach((key, value) -> {System.out.println(key + ": " + value);});
-    }
-    public void printEpicTasks() {
-        epicTasks.forEach((key, value) -> {System.out.println(key + ": " + value);});
+    public void deleteSubtasksSetEpicStatus() {
+        subTasks.clear();
+        for (EpicTask epic : epicTasks.values()) {
+            epic.clearSubTask();
+            epic.setStatus(Status.NEW);
+        }
     }
 
     public void checkEpicStatus(int epicId) {
