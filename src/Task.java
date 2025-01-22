@@ -80,6 +80,9 @@ public class Task {
         if (description != null) {
             hash = hash + description.hashCode();
         }
+        if (id != 0) {
+            hash = hash + id * 2;
+        }
         return hash;
     }
 

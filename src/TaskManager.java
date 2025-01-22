@@ -9,24 +9,22 @@ public class TaskManager{
     private final Map<Integer, SubTask> subTasks = new HashMap<>();
     private int nextId = 1;
 
-
-    public int getNextId() {
-        return nextId++;
-    }
-
     public void addTask(Task task) {
-        int id = task.setId(getNextId());
-        tasks.put(id, task);
+        task.setId(getNextId());
+        int taskId = task.getId();
+        tasks.put(taskId, task);
     }
 
     public void addEpicTask(EpicTask epicTask) {
-        int id = epicTask.setId(getNextId());
-        epicTasks.put(id, epicTask);
+        epicTask.setId(getNextId());
+        int epicTaskId = epicTask.getId();
+        epicTasks.put(epicTaskId, epicTask);
     }
 
     public void addSubTask (SubTask subTask) {
         EpicTask epicTask = epicTasks.get(subTask.getEpicId());
-        int subTaskId = subTask.setId(getNextId());
+       subTask.setId(getNextId());
+        int subTaskId = subTask.getId();
         epicTask.addSubTaskId(subTaskId);
         subTasks.put(subTaskId, subTask);
     }
@@ -67,10 +65,6 @@ public class TaskManager{
     }
 
     public ArrayList<SubTask> getSubTasks() {return new ArrayList<>(subTasks.values());}
-
-    public List<Integer> getEpicSubtasksIds(EpicTask epicTask) {
-        return epicTask.getSubTaskIds();
-    }
 
     public List<SubTask> getSubtasksByEpic(EpicTask epicTask) {
         List <Integer> subtaskIds = epicTask.getSubTaskIds();
@@ -117,7 +111,7 @@ public class TaskManager{
         }
     }
 
-    public void checkEpicStatus(int epicId) {
+    private void checkEpicStatus(int epicId) {
         EpicTask epicTask = epicTasks.get(epicId);
         List<Integer> subtaskIds = epicTask.getSubTaskIds();
 
@@ -135,6 +129,10 @@ public class TaskManager{
         } else {
             epicTask.setStatus(Status.IN_PROGRESS);
         }
+    }
+
+    private int getNextId() {
+        return nextId++;
     }
 
 }
