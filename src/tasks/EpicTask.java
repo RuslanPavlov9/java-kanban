@@ -1,3 +1,7 @@
+package tasks;
+
+import enums.Status;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,15 +40,14 @@ public class EpicTask extends Task {
                     "название='" + title + '\'' +
                     ", описание='" + description + '\'' +
                     ", id='" + id + '\'' +
-                    ", статус='" + status + '}' + '\'';
+                    ", статус='" + status + "}";
         } else {
             return "Эпик{" +
                     "название='" + title + '\'' +
                     ", описание='" + description + '\'' +
                     ", id='" + id + '\'' +
                     ", статус='" + status + '\'' +
-                    ", id подзадачи='" + subTaskIds + '}' + '\'';
+                    ", id подзадачи=" + subTaskIds + "}";
         }
     }
-
 }

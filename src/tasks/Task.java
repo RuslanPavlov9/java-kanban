@@ -1,3 +1,7 @@
+package tasks;
+
+import enums.Status;
+
 import java.util.Objects;
 
 public class Task {
@@ -82,6 +86,9 @@ public class Task {
         }
         if (id != 0) {
             hash = hash + id * 2;
+        }
+        if (status != null) {
+            hash = hash + status.toString().length();
         }
         return hash;
     }

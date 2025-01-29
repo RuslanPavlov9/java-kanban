@@ -1,6 +1,11 @@
+import enums.Status;
+import tasks.EpicTask;
+import tasks.SubTask;
+import tasks.Task;
+
 public class Main {
 
-     static TaskManager taskManager = new TaskManager();
+     static InMemoryTaskManager taskManager = Managers.getDefault();
 
         public static void main(String[] args) {
 
