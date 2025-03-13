@@ -5,13 +5,13 @@ import tasks.Task;
 
 public class Main {
 
-    static final InMemoryTaskManager taskManager = Managers.getDefault();
+     static final InMemoryTaskManager taskManager = Managers.getDefault();
 
-    public static void main(String[] args) {
+        public static void main(String[] args) {
 
         Task task1 = new Task("Задача 1", "Описание задачи 1");
         taskManager.addTask(task1);
-        Task task2 = new Task("Задача 2", "Описание задачи 2");
+        Task task2= new Task("Задача 2", "Описание задачи 2" );
         taskManager.addTask(task2);
 
         EpicTask epicTask1 = new EpicTask("Эпик 1", "Описание эпика 1");
