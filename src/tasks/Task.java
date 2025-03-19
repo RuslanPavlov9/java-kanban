@@ -22,6 +22,13 @@ public class Task {
         this.status = status;
     }
 
+    public Task(int id, String title, String description, Status status) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.status = status;
+    }
+
     public String getTitle() {
         return title;
     }
@@ -33,6 +40,7 @@ public class Task {
     public String getDescription() {
         return description;
     }
+
     public Status getStatus() {
         return status;
     }
@@ -41,12 +49,15 @@ public class Task {
     public void setTitle(String title) {
         this.title = title;
     }
+
     public void setDescription(String description) {
         this.description = description;
     }
+
     public void setStatus(Status status) {
         this.status = status;
     }
+
     public int setId(int id) {
         this.id = id;
         return id;
