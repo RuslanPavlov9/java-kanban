@@ -121,31 +121,4 @@ class FileBackedTaskManagerTest {
         assertThrows(IllegalArgumentException.class, () -> manager.loadFromFile());
     }
 
-//    @Test
-//    void testSaveAndLoadWithEmptyEpicIdForSubTask() {
-//        SubTask subTask = new SubTask(3, "Sub Task2", "Description sub task3", Status.DONE, 0); // Некорректный epicId
-//        manager.addSubTask(subTask);
-//
-//        FileBackedTaskManager loadedManager = new FileBackedTaskManager(file);
-//        loadedManager.loadFromFile();
-//
-//        List<SubTask> subTasks = loadedManager.getSubTasks();
-//        assertEquals(1, subTasks.size());
-//        assertEquals(subTask, subTasks.get(0));
-//        assertNull(subTasks.get(0).getEpicId()); // Проверяем, что epicId остался некорректным
-//    }
-
-//    @Test
-//    void testSaveAndLoadWithMissingEpic() {
-//        SubTask subTask = new SubTask(3, "Sub Task2", "Description sub task3", Status.DONE, 999); // Несуществующий epicId
-//        manager.addSubTask(subTask);
-//
-//        FileBackedTaskManager loadedManager = new FileBackedTaskManager(file);
-//        loadedManager.loadFromFile();
-//
-//        List<SubTask> subTasks = loadedManager.getSubTasks();
-//        assertEquals(1, subTasks.size());
-//        assertEquals(subTask, subTasks.get(0));
-//        assertEquals(999, subTasks.get(0).getEpicId()); // Проверяем, что epicId остался некорректным
-//    }
 }
