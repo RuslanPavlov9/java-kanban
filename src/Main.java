@@ -5,7 +5,7 @@ import tasks.Task;
 
 public class Main {
 
-    static InMemoryTaskManager taskManager = Managers.getDefault();
+    static final InMemoryTaskManager taskManager = Managers.getDefault();
 
     public static void main(String[] args) {
 
@@ -53,11 +53,14 @@ public class Main {
         System.out.println(epicTask2);
         System.out.println(subtask3);
 
+        System.out.println("________история____________");
+        taskManager.getTaskById(1);
+        taskManager.getTaskById(2);
+        System.out.println(taskManager.getHistory());
 
         System.out.println("________удаление____________");
         taskManager.removeTaskById(task1.getId());
         taskManager.removeEpicTaskById(epicTask1.getId());
-
     }
 
 }
