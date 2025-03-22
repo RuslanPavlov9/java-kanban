@@ -1,4 +1,7 @@
 import enums.Status;
+
+import org.junit.jupiter.api.BeforeAll;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import tasks.Task;
@@ -16,6 +19,7 @@ public class InMemoryHistoryManagerTest {
     @BeforeEach
     public void setUp() {
         tm = Managers.getDefault();
+
         task1 = new Task("1", "Task 1");
         task2 = new Task("2", "Task 2");
         task3 = new Task("3", "Task 3");
