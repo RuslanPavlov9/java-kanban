@@ -13,7 +13,7 @@ public class InMemoryTaskManager implements TaskManager {
     private final Map<Integer, EpicTask> epicTasks = new HashMap<>();
     private final Map<Integer, SubTask> subTasks = new HashMap<>();
     private final InMemoryHistoryManager historyManager = Managers.getInMemoryHistoryManager();
-    private int nextId = 1;
+    protected int nextId = 1;
 
     @Override
     public void addTask(Task task) {

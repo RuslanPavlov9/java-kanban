@@ -1,7 +1,5 @@
 import enums.Status;
 
-import org.junit.jupiter.api.BeforeAll;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import tasks.Task;
@@ -26,21 +24,21 @@ public class InMemoryHistoryManagerTest {
     }
 
     @Test
-    public void getHistoryShouldReturnListOfTasks(){
-        Task task = new Task("задача типовая","описание");
+    public void getHistoryShouldReturnListOfTasks() {
+        Task task = new Task("задача типовая", "описание");
         tm.addTask(task);
         int taskId = task.getId();
         tm.getTaskById(taskId);
-        List<Task>list = tm.getHistory();
-        assertEquals(1, list.size(),"Ожидался список из одной задачи");
+        List<Task> list = tm.getHistory();
+        assertEquals(1, list.size(), "Ожидался список из одной задачи");
     }
 
     @Test
-    public void shoulldReturnEqualsFields(){
-        Task task1 = new Task("задача типовая","описание", 1, Status.NEW);
+    public void shoulldReturnEqualsFields() {
+        Task task1 = new Task("задача типовая", "описание", 1, Status.NEW);
         tm.addTask(task1);
         int taskId = task1.getId();
-        Task taskFromTm= tm.getTaskById(taskId);
+        Task taskFromTm = tm.getTaskById(taskId);
         assertEquals(1, taskFromTm.getId());
         assertEquals("задача типовая", taskFromTm.getTitle());
         assertEquals("описание", taskFromTm.getDescription());
@@ -65,12 +63,12 @@ public class InMemoryHistoryManagerTest {
     @Test
     public void getIdTmShouldReturnOldTaskAfterDelete() {
         Task task1 = new Task("Заголовок1", "Описание1");
-        Task task2 = new Task("Заголовок1", "Описание1",1,Status.IN_PROGRESS);
+        Task task2 = new Task("Заголовок1", "Описание1", 1, Status.IN_PROGRESS);
         tm.addTask(task1);
         int taskId1 = task1.getId();
         tm.addTask(task2);
         int taskId2 = task2.getId();
-        assertFalse(taskId1 == taskId2,"Идентификаторы задач совпадают");
+        assertFalse(taskId1 == taskId2, "Идентификаторы задач совпадают");
     }
 
     @Test
