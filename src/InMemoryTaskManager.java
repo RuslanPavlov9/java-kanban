@@ -9,9 +9,9 @@ import java.util.List;
 import java.util.Map;
 
 public class InMemoryTaskManager implements TaskManager {
-    private final Map<Integer, Task> tasks = new HashMap<>();
-    private final Map<Integer, EpicTask> epicTasks = new HashMap<>();
-    private final Map<Integer, SubTask> subTasks = new HashMap<>();
+    protected final Map<Integer, Task> tasks = new HashMap<>();
+    protected final Map<Integer, EpicTask> epicTasks = new HashMap<>();
+    protected final Map<Integer, SubTask> subTasks = new HashMap<>();
     private final InMemoryHistoryManager historyManager = Managers.getInMemoryHistoryManager();
     protected int nextId = 1;
 

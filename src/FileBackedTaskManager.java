@@ -22,34 +22,8 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     public static void main(String[] args) throws IOException {
-        // File file = File.createTempFile("tasks1", ".csv");
         File file = new File(".idea/resources/tasks.csv");
         FileBackedTaskManager fileManager = loadFromFile(file);
-//        Task task1 = new Task("Задача 1", "Описание задачи 1");
-//        fileManager.addTask(task1);
-//        Task task2 = new Task("Задача 2", "Описание задачи 2");
-//        fileManager.addTask(task2);
-//
-//        EpicTask epicTask1 = new EpicTask("Эпик 1", "Описание эпика 1");
-//        fileManager.addEpicTask(epicTask1);
-//        EpicTask epicTask2 = new EpicTask("Эпик 2", "Описание эпика 2");
-//        fileManager.addEpicTask(epicTask2);
-//
-//        SubTask subtask3 = new SubTask("Подзадача 1 Эпика 2", "Описание подзадачи 1 эпика 2", epicTask2.getId());
-//        fileManager.addSubTask(subtask3);
-//        SubTask subtask1 = new SubTask("Подзадача 1 Эпика 1", "Описание подзадачи 1", epicTask1.getId());
-//        fileManager.addSubTask(subtask1);
-//        SubTask subtask2 = new SubTask("Подзадача 2 Эпика 1", "Описание подзадачи 2", epicTask1.getId());
-//        fileManager.addSubTask(subtask2);
-
-        System.out.println("getTasks,getEpicsTasks,getSubTasks");
-        System.out.println(fileManager.getTasks());
-        System.out.println(fileManager.getEpicsTasks());
-        System.out.println(fileManager.getSubTasks());
-
-//        fileManager.deleteEpics();
-//        fileManager.removeAllTasks();
-        //loadFromFile(file);
 
         System.out.println("getTasks,getEpicsTasks,getSubTasks");
         System.out.println(fileManager.getTasks());
@@ -58,39 +32,67 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     }
 
+    public static FileBackedTaskManager loadFromFile(File file) {
+        FileBackedTaskManager fileManager = new FileBackedTaskManager(file);
+        int maxId = 0;
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            String line = reader.readLine(); // Пропускаем заголовок
+            while ((line = reader.readLine()) != null) {
+                Task task = fromString(line);
+                if (task instanceof EpicTask) {
+                    fileManager.addEpicTask((EpicTask) task);
+                } else if (task instanceof SubTask) {
+                    fileManager.addSubTask((SubTask) task);
+                } else {
+                    fileManager.addTask(task);
+                }
+            }
+            fileManager.nextId = maxId + 1;
+        } catch (IOException e) {
+            throw new ManagerSaveException("Ошибка при чтении данных из файла", e);
+        }
+        return fileManager;
+    }
+
     @Override
     public void addTask(Task task) {
-        super.addTask(task);
+        int taskId = task.getId();
+        tasks.put(taskId, task);
         save();
     }
 
     @Override
     public void addEpicTask(EpicTask epicTask) {
-        super.addEpicTask(epicTask);
+        int epicTaskId = epicTask.getId();
+        epicTasks.put(epicTaskId, epicTask);
         save();
     }
 
     @Override
     public void addSubTask(SubTask subTask) {
-        super.addSubTask(subTask);
+        int subTaskId = subTask.getId();
+        subTasks.put(subTaskId, subTask);
         save();
     }
 
     @Override
     public void updateTask(Task task) {
-        super.updateTask(task);
+        int taskId = task.getId();
+        tasks.put(taskId, task);
         save();
     }
 
     @Override
     public void updateEpicTask(EpicTask epicTask) {
-        super.updateEpicTask(epicTask);
+        int epicTaskId = epicTask.getId();
+        epicTasks.put(epicTaskId, epicTask);
         save();
     }
 
     @Override
     public void updateSubTask(SubTask subTask) {
-        super.updateSubTask(subTask);
+        int subTaskId = subTask.getId();
+        subTasks.put(subTaskId, subTask);
         save();
     }
 
@@ -147,28 +149,6 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         }
     }
 
-    private static FileBackedTaskManager loadFromFile(File file) {
-        FileBackedTaskManager fileManager = new FileBackedTaskManager(file);
-        int maxId = 0;
-        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-            String line = reader.readLine(); // Пропускаем заголовок
-            while ((line = reader.readLine()) != null) {
-                Task task = fromString(line);
-                if (task instanceof EpicTask) {
-                    fileManager.addEpicTask((EpicTask) task);
-                } else if (task instanceof SubTask) {
-                    fileManager.addSubTask((SubTask) task);
-                } else {
-                    fileManager.addTask(task);
-                }
-            }
-            fileManager.nextId = maxId + 1;
-        } catch (IOException e) {
-            throw new ManagerSaveException("Ошибка при чтении данных из файла", e);
-        }
-        return fileManager;
-    }
-
     private String toString(Task task) {
         if (task instanceof SubTask) {
             SubTask subTask = (SubTask) task;
@@ -183,7 +163,6 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         }
     }
 
-    // Метод для создания задачи из строки
     private static Task fromString(String value) {
         String[] parts = value.split(",");
         int id = Integer.parseInt(parts[0]);
