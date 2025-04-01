@@ -3,9 +3,12 @@ import tasks.EpicTask;
 import tasks.SubTask;
 import tasks.Task;
 
+import java.io.File;
+
 public class Main {
 
-    static final InMemoryTaskManager taskManager = Managers.getDefault();
+    static File file = new File(".idea/resources/tasks.csv");
+    static final FileBackedTaskManager taskManager = Managers.getDefaultFileBackedTM(file);
 
     public static void main(String[] args) {
 
