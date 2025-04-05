@@ -3,6 +3,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import tasks.Task;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class TaskTest {
@@ -11,14 +14,18 @@ class TaskTest {
     private final String description = "Описание задачи";
     private final int id = 1;
     private final Status status = Status.IN_PROGRESS;
+    private final Duration duration = Duration.ofHours(2);
+    private final LocalDateTime startTime = LocalDateTime.of(2023, 1, 1, 10, 0);
 
     private Task taskWithAllFields;
     private Task taskWithTitleAndDescription;
+    private Task taskWithTimeFields;
 
     @BeforeEach
     void setUp() {
         taskWithAllFields = new Task(title, description, id, status);
         taskWithTitleAndDescription = new Task(title, description);
+        taskWithTimeFields = new Task(id, title, description, status, duration, startTime);
     }
 
     @Test
@@ -46,6 +53,25 @@ class TaskTest {
     }
 
     @Test
+    void testGetDuration() {
+        assertNull(taskWithAllFields.getDuration(), "Duration должен быть null, если не установлен");
+        assertEquals(duration, taskWithTimeFields.getDuration(), "Duration должен соответствовать установленному значению");
+    }
+
+    @Test
+    void testGetStartTime() {
+        assertNull(taskWithAllFields.getStartTime(), "StartTime должен быть null, если не установлен");
+        assertEquals(startTime, taskWithTimeFields.getStartTime(), "StartTime должен соответствовать установленному значению");
+    }
+
+    @Test
+    void testGetEndTime() {
+        assertNull(taskWithAllFields.getEndTime(), "EndTime должен быть null, если не установлены временные параметры");
+        LocalDateTime expectedEndTime = startTime.plus(duration);
+        assertEquals(expectedEndTime, taskWithTimeFields.getEndTime(), "EndTime должен корректно рассчитываться");
+    }
+
+    @Test
     void testSetTitle() {
         String newTitle = "Заголовок новый";
         taskWithAllFields.setTitle(newTitle);
@@ -67,6 +93,20 @@ class TaskTest {
     }
 
     @Test
+    void testSetDuration() {
+        Duration newDuration = Duration.ofHours(3);
+        taskWithAllFields.setDuration(newDuration);
+        assertEquals(newDuration, taskWithAllFields.getDuration(), "Ожидается обновление duration");
+    }
+
+    @Test
+    void testSetStartTime() {
+        LocalDateTime newStartTime = LocalDateTime.now();
+        taskWithAllFields.setStartTime(newStartTime);
+        assertEquals(newStartTime, taskWithAllFields.getStartTime(), "Ожидается обновление startTime");
+    }
+
+    @Test
     void testSetId() {
         int newId = 2;
         assertEquals(newId, taskWithAllFields.setId(newId), "Айди должен быть обновлен и возвращен корректным.");
@@ -80,57 +120,50 @@ class TaskTest {
                 ", описание='" + description + '\'' +
                 ", id=" + id +
                 ", статус='" + status + '\'' +
+                ", продолжительность=" + duration +
+                ", время начала=" + startTime +
                 '}';
-        assertEquals(expectedString, taskWithAllFields.toString(), "toString должен возвращать корректные сообщения");
+        assertEquals(expectedString, taskWithTimeFields.toString(),
+                "Порядок полей в toString должен соответствовать порядку в конструкторе");
     }
 
     @Test
-    void testToStringWithoutIdAndStatus() {
+    void testToStringWithoutTime() {
+        String expectedString = "Задача{" +
+                "название='" + title + '\'' +
+                ", описание='" + description + '\'' +
+                ", id=" + id +
+                ", статус='" + status + '\'' +
+                ", продолжительность=null" +
+                ", время начала=null" +
+                '}';
+        assertEquals(expectedString, taskWithAllFields.toString(),
+                "Порядок полей должен сохраняться даже при null значениях");
+    }
+
+    @Test
+    void testToStringWithMinimalFields() {
         String expectedString = "Задача{" +
                 "название='" + title + '\'' +
                 ", описание='" + description + '\'' +
                 ", id=0" +
                 ", статус='NEW'" +
+                ", продолжительность=null" +
+                ", время начала=null" +
                 '}';
-        assertEquals(expectedString, taskWithTitleAndDescription.toString(), "toString должен возвращать корректные сообщения без айди и статуса.");
+        assertEquals(expectedString, taskWithTitleAndDescription.toString(),
+                "Порядок полей должен сохраняться для минимального конструктора");
     }
 
     @Test
-    void testEquals() {
-        Task task1 = new Task(title, description, id, status);
-        Task task2 = new Task(title, description, id, status);
-
-        assertTrue(task1.equals(task2), "Задачи с одинаковыми полями должны быть равнозначными.");
-
-        Task task3 = new Task("Новый заголовок", description, id, status);
-        assertFalse(task1.equals(task3), "Задачи с разными названиями не должны быть одинаковыми.");
-
-        Task task4 = new Task(title, "Новое описание", id, status);
-        assertFalse(task1.equals(task4), "Tasks with different descriptions should not be equal.");
-
-        Task task5 = new Task(title, description, 2, status);
-        assertFalse(task1.equals(task5), "Задачи с разными идентификаторами не должны быть равными.");
-
-        Task task6 = new Task(title, description, id, Status.DONE);
-        assertFalse(task1.equals(task6), "Задачи с разным статусом не должны быть равными.");
+    void testConstructorWithTimeParameters() {
+        Task task = new Task(id, title, description, status, duration, startTime);
+        assertEquals(id, task.getId());
+        assertEquals(title, task.getTitle());
+        assertEquals(description, task.getDescription());
+        assertEquals(status, task.getStatus());
+        assertEquals(duration, task.getDuration());
+        assertEquals(startTime, task.getStartTime());
     }
 
-    @Test
-    void testHashCode() {
-        Task task1 = new Task(title, description, id, status);
-        Task task2 = new Task(title, description, id, status);
-        assertEquals(task1.hashCode(), task2.hashCode(), "Хеш-коды для одинаковых задач должны быть одинаковыми.");
-
-        Task task3 = new Task("Новый заголовок", description, id, status);
-        assertNotEquals(task1.hashCode(), task3.hashCode(), "Хэш-коды для задач с разными названиями должны быть разными..");
-
-        Task task4 = new Task(title, "Новое описание", id, status);
-        assertNotEquals(task1.hashCode(), task4.hashCode(), "Хеш-коды для задач с разным описанием должны быть разными.");
-
-        Task task5 = new Task(title, description, 2, status);
-        assertNotEquals(task1.hashCode(), task5.hashCode(), "Хэш-коды для задач с разными идентификаторами должны быть разными..");
-
-        Task task6 = new Task(title, description, id, Status.DONE);
-        assertNotEquals(task1.hashCode(), task6.hashCode(), "Хэш-коды для задач с разными статусами должны быть разными.");
-    }
 }

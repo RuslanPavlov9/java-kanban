@@ -10,11 +10,9 @@ public class InMemoryHistoryManager implements HistoryManager {
     @Override
     public void add(Task task) {
         if (tasksHistory.containsKey(task.getId())) {
-            // Удаляем существующий узел, если задача уже есть
             remove(task.getId());
         }
 
-        // Создаем новый узел и добавляем его в конец списка
         Node newNode = new Node(task);
         addToTail(newNode);
         tasksHistory.put(task.getId(), newNode);
@@ -24,34 +22,28 @@ public class InMemoryHistoryManager implements HistoryManager {
     public void remove(int id) {
         Node node = tasksHistory.get(id);
         if (node == null) {
-            return; // Если узла нет, ничего не делаем
+            return;
         }
 
         if (node.prev != null) {
             node.prev.next = node.next;
         } else {
-            head = node.next; // Если узел был головой, обновляем голову
+            head = node.next;
         }
 
         if (node.next != null) {
             node.next.prev = node.prev;
         } else {
-            tail = node.prev; // Если узел был хвостом, обновляем хвост
+            tail = node.prev;
         }
 
-        // Удаляем узел из карты
         tasksHistory.remove(id);
     }
 
-    /**
-     * Добавляет узел в конец списка.
-     */
     private void addToTail(Node node) {
         if (tail == null) {
-            // Если список пуст, устанавливаем голову и хвост
             head = tail = node;
         } else {
-            // Добавляем новый узел после текущего хвоста
             tail.next = node;
             node.prev = tail;
             tail = node;
@@ -64,15 +56,15 @@ public class InMemoryHistoryManager implements HistoryManager {
         Node current = head;
 
         while (current != null) {
-            history.add(current.task); // Добавляем задачу в список
-            current = current.next;    // Переходим к следующему узлу
+            history.add(current.task);
+            current = current.next;
         }
 
-        return history; // Возвращаем ArrayList<Task>
+        return history;
     }
 
     private static class Node {
-        Task task; // Храним саму задачу
+        Task task;
         Node prev;
         Node next;
 
