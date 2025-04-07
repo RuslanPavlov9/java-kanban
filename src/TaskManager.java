@@ -50,6 +50,4 @@ public interface TaskManager {
 
     TreeSet<Task> getPrioritizedTasks();
 
-    boolean isTimeOverlap(Task newTask);
-
 }

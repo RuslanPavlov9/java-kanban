@@ -19,7 +19,7 @@ public class InMemoryTaskManager implements TaskManager {
     protected final Map<Integer, EpicTask> epicTasks = new HashMap<>();
     public final Map<Integer, SubTask> subTasks = new HashMap<>();
     private final InMemoryHistoryManager historyManager = Managers.getInMemoryHistoryManager();
-    TreeSet<Task> prioritizedTasks = new TreeSet<>(Comparator.comparing(Task::getStartTime, Comparator.nullsLast(Comparator.naturalOrder())));
+    private TreeSet<Task> prioritizedTasks = new TreeSet<>(Comparator.comparing(Task::getStartTime, Comparator.nullsLast(Comparator.naturalOrder())));
     protected int nextId = 1;
 
     @Override
@@ -201,7 +201,7 @@ public class InMemoryTaskManager implements TaskManager {
         return historyManager.getHistory();
     }
 
-    void checkEpicStatus(int epicId) {
+    private void checkEpicStatus(int epicId) {
         EpicTask epicTask = epicTasks.get(epicId);
         List<Integer> subtaskIds = epicTask.getSubTaskIds();
 
@@ -221,8 +221,7 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
-    @Override
-    public boolean isTimeOverlap(Task newTask) {
+    private boolean isTimeOverlap(Task newTask) {
         if (newTask.getStartTime() == null || newTask.getEndTime() == null) {
             return false;
         }
@@ -236,7 +235,7 @@ public class InMemoryTaskManager implements TaskManager {
                 );
     }
 
-    void updateEpicTimeFields(int epicId) {
+    private void updateEpicTimeFields(int epicId) {
         EpicTask epic = epicTasks.get(epicId);
         List<SubTask> subTasksList = getSubtasksByEpic(epic);
 
