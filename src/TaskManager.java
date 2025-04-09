@@ -4,8 +4,10 @@ import tasks.Task;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TreeSet;
 
 public interface TaskManager {
+
     void addTask(Task task);
 
     void addEpicTask(EpicTask epicTask);
@@ -45,4 +47,7 @@ public interface TaskManager {
     void deleteSubtasksSetEpicStatus();
 
     List<Task> getHistory();
+
+    TreeSet<Task> getPrioritizedTasks();
+
 }

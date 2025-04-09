@@ -2,6 +2,9 @@ package tasks;
 
 import enums.Status;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+
 public class SubTask extends Task {
     private int epicId;
 
@@ -12,6 +15,16 @@ public class SubTask extends Task {
 
     public SubTask(int id, String title, String description, Status status, int epicId) {
         super(id, title, description, status);
+        this.epicId = epicId;
+    }
+
+    public SubTask(int id, String title, String description, Status status, int epicId, Duration duration, LocalDateTime startTime) {
+        super(id, title, description, status, duration, startTime);
+        this.epicId = epicId;
+    }
+
+    public SubTask(String title, String description, Status status, int epicId, Duration duration, LocalDateTime startTime) {
+        super(title, description, status, duration, startTime);
         this.epicId = epicId;
     }
 
@@ -28,10 +41,12 @@ public class SubTask extends Task {
     public String toString() {
         return "Подзадача{" +
                 "Имя задачи='" + title + '\'' +
-                ", description='" + description + '\'' +
+                ", описание='" + description + '\'' +
                 ", id=" + id +
                 ", epicId=" + epicId +
-                ", status=" + status +
+                ", статус=" + status +
+                ", продолжительность=" + duration +
+                ", время начала=" + startTime +
                 '}';
     }
 

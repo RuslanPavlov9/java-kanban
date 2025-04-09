@@ -8,7 +8,8 @@ import tasks.Task;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.List;
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -24,7 +25,7 @@ class FileBackedTaskManagerTest {
 
     @Test
     void shouldLoadEmptyFile() throws IOException {
-        Files.write(tempFile.toPath(), new byte[0]);
+        Files.write(tempFile.toPath(), "id,type,name,status,description,duration,startTime,epicId\n".getBytes());
         FileBackedTaskManager loadedManager = FileBackedTaskManager.loadFromFile(tempFile);
         assertTrue(loadedManager.getTasks().isEmpty());
         assertTrue(loadedManager.getEpicsTasks().isEmpty());
@@ -32,54 +33,95 @@ class FileBackedTaskManagerTest {
     }
 
     @Test
-    void shouldSaveMultipleTasks() {
-        Task task1 = new Task(1, "Задача 1", "Описание задачи 1", Status.NEW);
-        EpicTask epic1 = new EpicTask(2, "Эпик 1", "Описание эпика 1", Status.NEW);
-        SubTask subTask1 = new SubTask(3, "Подзадача 1", "Описание подзадачи 1", Status.NEW, 2);
+    void shouldSaveAndLoadTaskWithTimeFields() {
+        LocalDateTime startTime = LocalDateTime.of(2023, 1, 1, 10, 0);
+        Duration duration = Duration.ofHours(2);
+        Task task = new Task(1, "Задача", "Описание", Status.NEW, duration, startTime);
 
-        manager.addTask(task1);
-        manager.addEpicTask(epic1);
-        manager.addSubTask(subTask1);
-
+        manager.addTask(task);
         FileBackedTaskManager loadedManager = FileBackedTaskManager.loadFromFile(tempFile);
 
-        List<Task> tasks = loadedManager.getTasks();
-        List<EpicTask> epics = loadedManager.getEpicsTasks();
-        List<SubTask> subTasks = loadedManager.getSubTasks();
-
-        assertEquals(1, tasks.size());
-        assertEquals(1, epics.size());
-        assertEquals(1, subTasks.size());
-
-        assertEquals("Задача 1", tasks.get(0).getTitle());
-        assertEquals("Эпик 1", epics.get(0).getTitle());
-        assertEquals("Подзадача 1", subTasks.get(0).getTitle());
+        Task loadedTask = loadedManager.getTaskById(1);
+        assertEquals(duration, loadedTask.getDuration());
+        assertEquals(startTime, loadedTask.getStartTime());
     }
 
     @Test
-    void shouldLoadMultipleTasks() {
-        Task task1 = new Task(1, "Задача 1", "Описание задачи 1", Status.NEW);
-        Task task2 = new Task(2, "Задача 2", "Описание задачи 2", Status.IN_PROGRESS);
-        EpicTask epic1 = new EpicTask(3, "Эпик 1", "Описание эпика 1", Status.DONE);
-        SubTask subTask1 = new SubTask(4, "Подзадача 1", "Описание подзадачи 1", Status.NEW, 3);
+    void shouldSaveAndLoadEpicWithSubTasks() {
+        LocalDateTime startTime = LocalDateTime.of(2023, 1, 1, 10, 0);
+        Duration duration = Duration.ofHours(1);
 
-        manager.addTask(task1);
-        manager.addTask(task2);
-        manager.addEpicTask(epic1);
-        manager.addSubTask(subTask1);
+        EpicTask epic = new EpicTask(1, "Эпик", "Описание", Status.NEW);
+        SubTask subTask = new SubTask(2, "Подзадача", "Описание", Status.NEW,
+                1, duration, startTime);
+
+        manager.addEpicTask(epic);
+        manager.addSubTask(subTask);
 
         FileBackedTaskManager loadedManager = FileBackedTaskManager.loadFromFile(tempFile);
 
-        assertEquals(2, loadedManager.getTasks().size());
-        assertEquals(1, loadedManager.getEpicsTasks().size());
-        assertEquals(1, loadedManager.getSubTasks().size());
+        EpicTask loadedEpic = loadedManager.getEpicTaskById(1);
+        SubTask loadedSubTask = loadedManager.getSubTaskById(2);
 
-        Task loadedTask = loadedManager.getTasks().get(0);
-        assertEquals("Задача 1", loadedTask.getTitle());
-        assertEquals(Status.NEW, loadedTask.getStatus());
-
-        SubTask loadedSubTask = loadedManager.getSubTasks().get(0);
-        assertEquals(3, loadedSubTask.getEpicId());
+        assertEquals(duration, loadedSubTask.getDuration());
+        assertEquals(startTime, loadedSubTask.getStartTime());
+        assertEquals(startTime, loadedEpic.getStartTime());
+        assertEquals(duration, loadedEpic.getDuration());
     }
 
+    @Test
+    void shouldHandleNullTimeFields() {
+        Task task = new Task(1, "Task", "Описание", Status.NEW);
+        manager.addTask(task);
+
+        FileBackedTaskManager loadedManager = FileBackedTaskManager.loadFromFile(tempFile);
+        Task loadedTask = loadedManager.getTaskById(1);
+
+        assertNull(loadedTask.getDuration());
+        assertNull(loadedTask.getStartTime());
+    }
+
+    @Test
+    void shouldSaveAndLoadAllFieldsInCorrectOrder() throws IOException {
+        LocalDateTime startTime = LocalDateTime.of(2023, 1, 1, 10, 0);
+        Duration duration = Duration.ofHours(1);
+        Task task = new Task(1, "Задача", "Описание", Status.NEW, duration, startTime);
+        manager.addTask(task);
+
+        String fileContent = Files.readString(tempFile.toPath());
+        String[] lines = fileContent.split("\n");
+        String taskLine = lines[1];
+
+        String[] fields = taskLine.split(",");
+        assertEquals("1", fields[0]); // айди
+        assertEquals("TASK", fields[1]); // тип
+        assertEquals("Задача", fields[2]); // тайтл
+        assertEquals("NEW", fields[3]); // статус
+        assertEquals("Описание", fields[4]); // описание
+        assertEquals("60", fields[5]); // продолжительность
+        assertEquals(startTime.toString(), fields[6]); // время начала
+    }
+
+    @Test
+    void shouldUpdateEpicTimeFieldsWhenSubTaskRemoved() {
+        LocalDateTime startTime1 = LocalDateTime.of(2023, 1, 1, 10, 0);
+        LocalDateTime startTime2 = LocalDateTime.of(2023, 1, 1, 12, 0);
+        Duration duration = Duration.ofHours(1);
+
+        EpicTask epic = new EpicTask(1, "Эпик", "Описание", Status.NEW);
+        SubTask subTask1 = new SubTask(2, "Подзадача 1", "Описание", Status.NEW,
+                1, duration, startTime1);
+        SubTask subTask2 = new SubTask(3, "Подзадача 2", "Описание", Status.NEW,
+                1, duration, startTime2);
+
+        manager.addEpicTask(epic);
+        manager.addSubTask(subTask1);
+        manager.addSubTask(subTask2);
+
+        manager.removeSubTaskById(2);
+
+        EpicTask updatedEpic = manager.getEpicTaskById(1);
+        assertEquals(startTime2, updatedEpic.getStartTime());
+        assertEquals(duration, updatedEpic.getDuration());
+    }
 }

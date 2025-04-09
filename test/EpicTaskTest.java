@@ -3,6 +3,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import tasks.EpicTask;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -14,10 +16,12 @@ class EpicTaskTest {
     private final String description = "Описание эпика";
     private final int id = 1;
     private final Status status = Status.NEW;
+    private final Duration duration = Duration.ofHours(2);
+    private final LocalDateTime startTime = LocalDateTime.of(2023, 1, 1, 10, 0);
 
     @BeforeEach
     void setUp() {
-        epicTask = new EpicTask(name, description, id, status);
+        epicTask = new EpicTask(id, name, description, status, duration, startTime);
     }
 
     @Test
@@ -54,8 +58,11 @@ class EpicTaskTest {
         String expectedString = "Эпик{название='" + name + '\'' +
                 ", описание='" + description + '\'' +
                 ", id='" + id + '\'' +
-                ", статус='" + status + "}";
-        assertEquals(expectedString, epicTask.toString(), "toString должен возвращать корректную строку. без подзадач.");
+                ", статус='" + status + '\'' +
+                ", продолжительность=" + duration +
+                ", время начала=" + startTime +
+                "}";
+        assertEquals(expectedString, epicTask.toString(), "toString должен возвращать корректную строку без подзадач.");
     }
 
     @Test
@@ -67,7 +74,22 @@ class EpicTaskTest {
                 ", описание='" + description + '\'' +
                 ", id='" + id + '\'' +
                 ", статус='" + status + '\'' +
-                ", id подзадачи=" + subTaskIds + "}";
-        assertEquals(expectedString, epicTask.toString(), "toString должен возвращать корректную строку. с подзадачами.");
+                ", id подзадачи=" + subTaskIds +
+                ", продолжительность=" + duration +
+                ", время начала=" + startTime +
+                "}";
+        assertEquals(expectedString, epicTask.toString(), "toString должен возвращать корректную строку с подзадачами.");
+    }
+
+    @Test
+    void testGetEndTime() {
+        LocalDateTime expectedEndTime = startTime.plus(duration);
+        assertEquals(expectedEndTime, epicTask.getEndTime(), "Время окончания должно корректно рассчитываться");
+    }
+
+    @Test
+    void testGetEndTimeWhenNoStartTime() {
+        EpicTask taskWithoutTime = new EpicTask(name, description, id, status);
+        assertNull(taskWithoutTime.getEndTime(), "При отсутствии времени начала должен возвращаться null");
     }
 }

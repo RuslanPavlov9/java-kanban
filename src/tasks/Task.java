@@ -2,6 +2,8 @@ package tasks;
 
 import enums.Status;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class Task {
@@ -9,6 +11,8 @@ public class Task {
     protected String description;
     protected int id;
     protected Status status = Status.NEW;
+    protected Duration duration;
+    protected LocalDateTime startTime;
 
     public Task(String title, String description) {
         this.title = title;
@@ -29,6 +33,29 @@ public class Task {
         this.status = status;
     }
 
+    public Task(String title, String description, Status status) {
+        this.title = title;
+        this.description = description;
+        this.status = status;
+    }
+
+    public Task(int id, String title, String description, Status status, Duration duration, LocalDateTime startTime) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.status = status;
+        this.duration = duration;
+        this.startTime = startTime;
+    }
+
+    public Task(String title, String description, Status status, Duration duration, LocalDateTime startTime) {
+        this.title = title;
+        this.description = description;
+        this.status = status;
+        this.duration = duration;
+        this.startTime = startTime;
+    }
+
     public String getTitle() {
         return title;
     }
@@ -45,6 +72,21 @@ public class Task {
         return status;
     }
 
+    public Duration getDuration() {
+        return duration;
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public LocalDateTime getEndTime() {
+        if (startTime != null && duration != null) {
+            return startTime.plus(duration);
+        }
+        return null;
+    }
+
     public void setTitle(String title) {
         this.title = title;
     }
@@ -55,6 +97,14 @@ public class Task {
 
     public void setStatus(Status status) {
         this.status = status;
+    }
+
+    public void setDuration(Duration duration) {
+        this.duration = duration;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
     }
 
     public int setId(int id) {
@@ -69,6 +119,8 @@ public class Task {
                 ", описание='" + description + '\'' +
                 ", id=" + id +
                 ", статус='" + status + '\'' +
+                ", продолжительность=" + duration +
+                ", время начала=" + startTime +
                 '}';
     }
 
@@ -80,27 +132,16 @@ public class Task {
         return id == task.id &&
                 Objects.equals(title, task.title) &&
                 Objects.equals(description, task.description) &&
-                Objects.equals(id, task.id) &&
-                Objects.equals(status, task.status);
+                Objects.equals(status, task.status) &&
+                Objects.equals(duration, task.duration) &&
+                Objects.equals(startTime, task.startTime);
     }
 
     @Override
     public final int hashCode() {
-        int hash = 17;
-        if (title != null) {
-            hash = hash + title.hashCode();
-        }
-        hash = hash * 31;
-        if (description != null) {
-            hash = hash + description.hashCode();
-        }
-        if (id != 0) {
-            hash = hash + id * 2;
-        }
-        if (status != null) {
-            hash = hash + status.toString().length();
-        }
-        return hash;
+        return Objects.hash(title, description, id, status, startTime);
     }
 
 }
+
+

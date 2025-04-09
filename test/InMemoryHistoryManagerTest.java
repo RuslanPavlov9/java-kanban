@@ -106,7 +106,7 @@ public class InMemoryHistoryManagerTest {
         taskId = task2.getId();
         tm.getTaskById(taskId);
 
-        taskId = task1.getId();  //обращаемся еще раз
+        taskId = task1.getId();
         tm.getTaskById(taskId);
 
         List<Task> history = tm.getHistory();
@@ -143,7 +143,7 @@ public class InMemoryHistoryManagerTest {
         taskId = task2.getId();
         tm.getTaskById(taskId);
 
-        tm.removeTaskById(5); // Удаляем несуществующую задачу
+        tm.removeTaskById(5);
 
         List<Task> history = tm.getHistory();
         assertEquals(List.of(task1, task2), history, "Удаление несуществующей задачи не должно влиять на историю");
@@ -163,7 +163,7 @@ public class InMemoryHistoryManagerTest {
         taskId = task3.getId();
         tm.getTaskById(taskId);
 
-        tm.removeTaskById(1); // Удаляем голову (task1)
+        tm.removeTaskById(1);
 
         List<Task> history = tm.getHistory();
         assertEquals(List.of(task2, task3), history, "Голова должна быть удалена");
@@ -183,7 +183,7 @@ public class InMemoryHistoryManagerTest {
         taskId = task3.getId();
         tm.getTaskById(taskId);
 
-        tm.removeTaskById(3); // Удаляем хвост (task3)
+        tm.removeTaskById(3);
 
         List<Task> history = tm.getHistory();
         assertEquals(List.of(task1, task2), history, "Хвост должен быть удален");
@@ -205,7 +205,7 @@ public class InMemoryHistoryManagerTest {
         taskId = task2.getId();
         tm.getTaskById(taskId);
 
-        tm.removeTaskById(1); // Удаляем task1
+        tm.removeTaskById(1);
 
         tm.addTask(task3);
         taskId = task3.getId();
