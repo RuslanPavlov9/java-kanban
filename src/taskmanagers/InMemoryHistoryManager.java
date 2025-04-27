@@ -1,3 +1,5 @@
+package taskmanagers;
+
 import tasks.Task;
 
 import java.util.*;
@@ -40,16 +42,6 @@ public class InMemoryHistoryManager implements HistoryManager {
         tasksHistory.remove(id);
     }
 
-    private void addToTail(Node node) {
-        if (tail == null) {
-            head = tail = node;
-        } else {
-            tail.next = node;
-            node.prev = tail;
-            tail = node;
-        }
-    }
-
     @Override
     public List<Task> getHistory() {
         List<Task> history = new ArrayList<>();
@@ -61,6 +53,16 @@ public class InMemoryHistoryManager implements HistoryManager {
         }
 
         return history;
+    }
+
+    private void addToTail(Node node) {
+        if (tail == null) {
+            head = tail = node;
+        } else {
+            tail.next = node;
+            node.prev = tail;
+            tail = node;
+        }
     }
 
     private static class Node {
@@ -85,4 +87,5 @@ public class InMemoryHistoryManager implements HistoryManager {
             return Objects.hash(task);
         }
     }
+
 }

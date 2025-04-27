@@ -1,3 +1,5 @@
+package taskmanagers;
+
 import enums.Status;
 import enums.TaskType;
 import exception.ManagerSaveException;
@@ -128,7 +130,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         save();
     }
 
-    void save() {
+    public void save() {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
             writer.write("id,type,name,status,description,duration,startTime,epicId\n");
             for (Task task : super.getTasks()) {

@@ -2,6 +2,7 @@ import enums.Status;
 import exception.TaskOverlapEception;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import taskmanagers.TaskManager;
 import tasks.EpicTask;
 import tasks.SubTask;
 import tasks.Task;
@@ -54,7 +55,6 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     public void shouldAddAndGetEpic() {
-        // taskManager.addEpicTask(epic);
         EpicTask savedEpic = taskManager.getEpicTaskById(epic.getId());
 
         assertNotNull(savedEpic, "Эпик не найден");

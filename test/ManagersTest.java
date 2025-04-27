@@ -1,4 +1,7 @@
 import org.junit.jupiter.api.Test;
+import taskmanagers.InMemoryHistoryManager;
+import taskmanagers.InMemoryTaskManager;
+import taskmanagers.Managers;
 
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
