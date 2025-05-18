@@ -1,3 +1,5 @@
+package taskmanagers;
+
 import enums.Status;
 import exception.TaskOverlapEception;
 import tasks.EpicTask;
@@ -128,7 +130,8 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public List<SubTask> getSubtasksByEpic(EpicTask epicTask) {
+    public List<SubTask> getSubtasksByEpic(int epciId) {
+        EpicTask epicTask = epicTasks.get(epciId);
         return epicTask.getSubTaskIds().stream()
                 .map(subTaskId -> subTasks.get(subTaskId))
                 .toList();
@@ -237,7 +240,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     private void updateEpicTimeFields(int epicId) {
         EpicTask epic = epicTasks.get(epicId);
-        List<SubTask> subTasksList = getSubtasksByEpic(epic);
+        List<SubTask> subTasksList = getSubtasksByEpic(epicId);
 
         if (subTasksList.isEmpty()) {
             epic.setStartTime(null);

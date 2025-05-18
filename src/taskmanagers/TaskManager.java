@@ -1,3 +1,5 @@
+package taskmanagers;
+
 import tasks.EpicTask;
 import tasks.SubTask;
 import tasks.Task;
@@ -32,7 +34,7 @@ public interface TaskManager {
 
     ArrayList<SubTask> getSubTasks();
 
-    List<SubTask> getSubtasksByEpic(EpicTask epicTask);
+    List<SubTask> getSubtasksByEpic(int epicId);
 
     void removeTaskById(int id);
 
